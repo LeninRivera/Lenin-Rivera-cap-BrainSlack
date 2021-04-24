@@ -2,37 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Username from "../../pages/Username";
 import socket from "../../socket";
+import { v4 as uuidv4 } from "uuid";
 
 function Chat(props) {
-  const [msg, setMsg] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState("");
   const [usersArr, setUsersArr] = useState([]);
   const [currentSelectedUserId, setCurrentSelectedUserId] = useState("");
-
-  //   socket.on("connect_error", (err) => {
-  //     if (err.message === "invalid username") {
-  //       sessionStorage.removeItem("username");
-  //     }
-  //   });
-
-  //   socket.on("connect", () => {});
-
-  //   const initReactiveProperties = (user) => {
-  //     user.hasNewMessages = false;
-  //   };
-
-  //   socket.on("users", (users) => {
-  //     console.log(users);
-
-  //     users.forEach((user) => {
-  //       user.self = user.userID === socket.id;
-  //       initReactiveProperties(user);
-  //       console.log(user);
-  //       setUsersArr([...usersArr, user]);
-  //     });
-  //     // users.map((user) => {
-
-  //     // });
-  //   });
 
   socket.on("users", (users) => {
     //returns all currently connected users
@@ -41,23 +17,56 @@ function Chat(props) {
 
   //adding new user that connect after you login
   socket.on("new user connected", (user) => {
-    console.log(user);
+    // console.log(user);
     setUsersArr([...usersArr, user]);
   });
 
   socket.on("updated users on disconnect", (users) => {
-    console.log("is this working");
+    // console.log("is this working");
     setUsersArr(users);
+  });
+
+  socket.on("private message", (message) => {
+    console.log(message);
+    setMessages(...messages, message);
   });
 
   const handleChange = (e) => {
     const value = e.target.value;
-    setMsg(value);
-    console.log(value);
+    setText(value);
+    // console.log(value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // console.log("this is the handleSubmit");
+    // console.log(e.target.text.value);
+    console.log("this is the socket:", socket);
+    const existingConversation = messages.find((element) => {
+      return (
+        (element.from === socket.auth.username &&
+          element.to === props.match.params.username) ||
+        (element.from === props.match.params.username &&
+          element.to === socket.username)
+      );
+    });
+
+    // console.log(existingConversation);
+    const message = {
+      from: socket.auth.username,
+      to: props.match.params.username,
+      conversationId: existingConversation
+        ? existingConversation.conversationId
+        : uuidv4(),
+      text: e.target.text.value,
+      time: new Date(),
+      fromSocketId: socket.id,
+      toSocketId: props.match.params.chatId,
+    };
+    setMessages([...messages, message]);
+    console.log(message);
+    console.log(messages);
+    socket.emit("private message", message);
   };
 
   const homeHandle = () => {
@@ -66,9 +75,19 @@ function Chat(props) {
     sessionStorage.removeItem("username");
   };
 
-  console.log(usersArr);
-  console.log(currentSelectedUserId);
-  console.log(props.match.params.chatId);
+  //filtering messages to only contain what belongs in the chat
+  //   const chatMessages = messages?.filter((element) => {
+  //     return (
+  //       (element.from === socket.auth.username &&
+  //         element.to === props.match.params.username) ||
+  //       (element.from === props.match.params.username &&
+  //         element.to === socket.username)
+  //     );
+  //   });
+
+  //   console.log(usersArr);
+  //   console.log(currentSelectedUserId);
+  //   console.log(props.match.params);
 
   return (
     <div>
@@ -83,7 +102,7 @@ function Chat(props) {
               <p
                 onClick={() => {
                   setCurrentSelectedUserId(user.userID);
-                  props.history.push(`/chat/${user.userID}`);
+                  props.history.push(`/chat/${user.username}/${user.userID}`);
                 }}
               >
                 {user.username}
@@ -92,12 +111,25 @@ function Chat(props) {
           );
         })}
       </div>
-      <h1>Chat box</h1>
-      <div style={{ width: "70vw", height: "40vh", backgroundColor: "blue" }}>
-        {msg}
+      <h1>
+        Chat box{" "}
+        {props.match.params.username ? props.match.params.username : null}
+      </h1>
+      <div
+        style={{ width: "70vw", height: "40vh", backgroundColor: "lightgrey" }}
+      >
+        {/* insert messages here (probably need to use username or socket id from params)*/}
+        {/* {chatMessages.map((message) => {
+          return (
+            <div>
+              <p>{message.from}</p>
+              <p>{message.text}</p>
+            </div>
+          );
+        })} */}
       </div>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="msg" onChange={handleChange} />
+        <input type="text" name="text" onChange={handleChange} />
         <button type="submit">Send</button>
       </form>
     </div>

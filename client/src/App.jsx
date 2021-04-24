@@ -18,7 +18,7 @@ function App() {
         <Switch>
           <Route exact path="/username" component={Username} />
           <ProtectedRoute exact path="/" component={Chat} />
-          <ProtectedRoute path="/chat/:chatId" component={Chat} />
+          <ProtectedRoute path="/chat/:username/:chatId" component={Chat} />
         </Switch>
       </Router>
     </div>
