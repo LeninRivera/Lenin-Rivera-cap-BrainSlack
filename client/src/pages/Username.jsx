@@ -15,7 +15,7 @@ function Username(props) {
     if (e.target.username.value !== "") {
       sessionStorage.setItem("username", e.target.username.value);
       socket.auth = { username };
-      socket.connect();
+      // socket.connect();
       props.history.push("/");
     }
   };

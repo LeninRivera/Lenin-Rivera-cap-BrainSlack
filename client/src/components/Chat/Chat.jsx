@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Username from "../../pages/Username";
 import socket from "../../socket";
 import { v4 as uuidv4 } from "uuid";
 
@@ -9,6 +8,9 @@ function Chat(props) {
   const [text, setText] = useState("");
   const [usersArr, setUsersArr] = useState([]);
   const [currentSelectedUserId, setCurrentSelectedUserId] = useState("");
+  const [displayMessages, setDisplayMessages] = useState(null);
+
+  socket.connect();
 
   socket.on("users", (users) => {
     //returns all currently connected users
@@ -28,7 +30,7 @@ function Chat(props) {
 
   socket.on("private message", (message) => {
     console.log(message);
-    setMessages(...messages, message);
+    setMessages([...messages, message]);
   });
 
   const handleChange = (e) => {
@@ -47,7 +49,7 @@ function Chat(props) {
         (element.from === socket.auth.username &&
           element.to === props.match.params.username) ||
         (element.from === props.match.params.username &&
-          element.to === socket.username)
+          element.to === socket.auth.username)
       );
     });
 
@@ -71,27 +73,50 @@ function Chat(props) {
 
   const homeHandle = () => {
     socket.disconnect();
-    props.history.push("/username");
     sessionStorage.removeItem("username");
   };
 
-  //filtering messages to only contain what belongs in the chat
-  //   const chatMessages = messages?.filter((element) => {
-  //     return (
-  //       (element.from === socket.auth.username &&
-  //         element.to === props.match.params.username) ||
-  //       (element.from === props.match.params.username &&
-  //         element.to === socket.username)
-  //     );
-  //   });
+  useEffect(() => {
+    console.log(messages);
+
+    //filtering messages to only contain what belongs in the chat
+    const chatMessages = messages.filter((element) => {
+      console.log("this is chatMessages");
+      console.log(element.from);
+      console.log(socket.auth.username);
+      console.log(element.to);
+      console.log(props.match.params.username);
+      return (
+        (element.from === socket.auth.username &&
+          element.to === props.match.params.username) ||
+        (element.from === props.match.params.username &&
+          element.to === socket.auth.username)
+      );
+    });
+    console.log(chatMessages);
+
+    setDisplayMessages(
+      chatMessages.map((message) => {
+        console.log("this displayMessages");
+        return (
+          <div key={uuidv4()}>
+            <p>{message.from}</p>
+            <p>{message.text}</p>
+          </div>
+        );
+      })
+    );
+    console.log(displayMessages);
+  }, [messages, props.match.params.username]);
 
   //   console.log(usersArr);
   //   console.log(currentSelectedUserId);
-  //   console.log(props.match.params);
+  console.log(messages);
+  console.log(displayMessages);
 
   return (
     <div>
-      <Link onClick={homeHandle}>
+      <Link to="/username" onClick={homeHandle}>
         <h1>Home</h1>
       </Link>
       <div>
@@ -100,6 +125,7 @@ function Chat(props) {
           return (
             <>
               <p
+                key={user.userID}
                 onClick={() => {
                   setCurrentSelectedUserId(user.userID);
                   props.history.push(`/chat/${user.username}/${user.userID}`);
@@ -119,14 +145,7 @@ function Chat(props) {
         style={{ width: "70vw", height: "40vh", backgroundColor: "lightgrey" }}
       >
         {/* insert messages here (probably need to use username or socket id from params)*/}
-        {/* {chatMessages.map((message) => {
-          return (
-            <div>
-              <p>{message.from}</p>
-              <p>{message.text}</p>
-            </div>
-          );
-        })} */}
+        {displayMessages}
       </div>
       <form onSubmit={handleSubmit}>
         <input type="text" name="text" onChange={handleChange} />
