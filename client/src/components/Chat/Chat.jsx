@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import socket from "../../socket";
 import { v4 as uuidv4 } from "uuid";
+import ScrollToBottom from "react-scroll-to-bottom";
 
 function Chat(props) {
   const [messages, setMessages] = useState([]);
@@ -141,12 +142,19 @@ function Chat(props) {
         Chat box{" "}
         {props.match.params.username ? props.match.params.username : null}
       </h1>
-      <div
-        style={{ width: "70vw", height: "40vh", backgroundColor: "lightgrey" }}
-      >
-        {/* insert messages here (probably need to use username or socket id from params)*/}
-        {displayMessages}
-      </div>
+      <ScrollToBottom>
+        <div
+          style={{
+            width: "70vw",
+            height: "40vh",
+            backgroundColor: "lightgrey",
+          }}
+        >
+          {/* insert messages here (probably need to use username or socket id from params)*/}
+          {displayMessages}
+        </div>
+      </ScrollToBottom>
+
       <form onSubmit={handleSubmit}>
         <input type="text" name="text" onChange={handleChange} />
         <button type="submit">Send</button>
