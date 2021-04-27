@@ -1,6 +1,12 @@
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
+
 import Username from "./pages/Username";
 import Chat from "./components/Chat/Chat";
 import "./App.scss";
@@ -8,6 +14,7 @@ import socket from "./socket";
 
 function App() {
   //any event received by client is printed in console
+  //todo remove when finished
   socket.onAny((event, ...args) => {
     console.log(event, args);
   });

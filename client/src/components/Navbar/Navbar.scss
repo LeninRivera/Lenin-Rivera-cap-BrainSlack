@@ -1,0 +1,30 @@
+@use '../../partials/partials' as *;
+
+.nav {
+  background-color: $navBackground;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 180px;
+  height: 5vh;
+
+  &--title {
+    width: 150px;
+    text-align: left;
+  }
+
+  &__list {
+    display: flex;
+    justify-content: space-between;
+    width: 250px;
+    list-style: none;
+
+    &--profile > a,
+    &--chat > a,
+    &--logout > a {
+      text-decoration: none;
+      color: white;
+    }
+  }
+}

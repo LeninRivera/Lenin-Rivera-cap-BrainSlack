@@ -1,0 +1,43 @@
+@use '../../partials/partials' as *;
+
+.chat {
+  background-color: $lightGrey;
+  height: 100%;
+  padding: 20px 180px;
+  display: flex;
+  justify-content: space-between;
+
+  &__users {
+    width: 15vw;
+    background-color: $usersBackground;
+    color: #ffffff;
+    padding: 16px 16px;
+
+    &--title {
+      text-align: left;
+      padding-bottom: 16px;
+    }
+
+    &__list--user {
+      text-align: left;
+      padding: 8px 0;
+    }
+  }
+
+  &__msg {
+    width: 45vw;
+
+    &--title {
+      text-align: left;
+    }
+
+    &__messages {
+      width: 100%;
+      height: 70vh;
+      background-color: #ffffff;
+
+      &--message {
+      }
+    }
+  }
+}
