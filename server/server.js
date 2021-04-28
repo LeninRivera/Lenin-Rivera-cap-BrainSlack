@@ -1,3 +1,5 @@
+require("dotenv").config();
+require("./db/config");
 const app = require("express")();
 const httpServer = require("http").createServer(app);
 const PORT = 8080;
@@ -19,13 +21,14 @@ io.use((socket, next) => {
   next();
 });
 
+const messages = [];
+
 //runs when a connection is made
 io.on("connection", (socket) => {
   //when a connection is made log below
   console.log("we have a new connection", socket.username, socket.id);
 
   const users = [];
-  const messages = [];
 
   for (let [id, socket] of io.of("/").sockets) {
     users.push({
@@ -35,6 +38,7 @@ io.on("connection", (socket) => {
   }
 
   socket.emit("users", users);
+  console.log(messages);
 
   socket.broadcast.emit("new user connected", {
     userID: socket.id,

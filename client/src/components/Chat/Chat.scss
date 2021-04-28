@@ -1,9 +1,13 @@
 @use '../../partials/partials' as *;
 
+.currentUser {
+  background-color: #3fba91;
+}
+
 .chat {
   background-color: $lightGrey;
   height: 100%;
-  padding: 20px 180px;
+  padding: 20px 11.3924vw;
   display: flex;
   justify-content: space-between;
 

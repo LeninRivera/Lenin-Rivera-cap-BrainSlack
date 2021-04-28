@@ -10,21 +10,25 @@ function Chat(props) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [usersArr, setUsersArr] = useState([]);
-  const [currentSelectedUserId, setCurrentSelectedUserId] = useState("");
+  const [currentSelectedUser, setCurrentSelectedUser] = useState("");
   const [displayMessages, setDisplayMessages] = useState(null);
+  const [user, setUser] = useState("");
 
   const username = sessionStorage.getItem("username");
 
+  socket.auth = { username };
+  socket.connect();
+
   useEffect(() => {
-    socket.connect();
-    socket.auth = username;
-  }, [username]);
-  console.log(socket.connect());
-  console.log(socket.username);
-  console.log(username);
+    setCurrentSelectedUser(props.match.params.username);
+    setUser(socket.username);
+  }, []);
+
+  console.log(socket);
 
   socket.on("users", (users) => {
     //returns all currently connected users
+    users.sort();
     setUsersArr(...usersArr, users);
   });
 
@@ -34,11 +38,11 @@ function Chat(props) {
   });
 
   socket.on("updated users on disconnect", (users) => {
+    console.log(users);
     setUsersArr(users);
   });
 
   socket.on("private message", (message) => {
-    console.log(message);
     setMessages([...messages, message]);
   });
 
@@ -49,7 +53,6 @@ function Chat(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("this is the socket:", socket);
     const existingConversation = messages.find((element) => {
       return (
         (element.from === socket.auth.username &&
@@ -71,8 +74,6 @@ function Chat(props) {
       toSocketId: props.match.params.chatId,
     };
     setMessages([...messages, message]);
-    console.log(message);
-    console.log(messages);
     socket.emit("private message", message);
   };
 
@@ -83,15 +84,8 @@ function Chat(props) {
   };
 
   useEffect(() => {
-    console.log(messages);
-
     //filtering messages to only contain what belongs in the chat
     const chatMessages = messages.filter((element) => {
-      // console.log("this is chatMessages");
-      // console.log(element.from);
-      // console.log(socket.auth.username);
-      // console.log(element.to);
-      // console.log(props.match.params.username);
       return (
         (element.from === socket.auth.username &&
           element.to === props.match.params.username) ||
@@ -99,12 +93,9 @@ function Chat(props) {
           element.to === socket.auth.username)
       );
     });
-    console.log(chatMessages);
 
     setDisplayMessages(
       chatMessages.map((message) => {
-        console.log(message.time);
-        console.log("this displayMessages");
         return (
           <div className="chat__msg__messages--message" key={uuidv4()}>
             <p className="chat__msg__messages--message--from">
@@ -118,11 +109,7 @@ function Chat(props) {
         );
       })
     );
-    console.log(displayMessages);
   }, [messages, props.match.params.username]);
-
-  console.log(messages);
-  console.log(displayMessages);
 
   return (
     <>
@@ -134,10 +121,13 @@ function Chat(props) {
             return (
               <ul className="chat__users__list">
                 <li
-                  className="chat__users__list--user"
+                  className={
+                    "chat__users__list--user " +
+                    (currentSelectedUser === user.username ? "currentUser" : "")
+                  }
                   key={user.userID}
                   onClick={() => {
-                    setCurrentSelectedUserId(user.userID);
+                    setCurrentSelectedUser(user.username);
                     props.history.push(`/chat/${user.username}/${user.userID}`);
                   }}
                 >

@@ -10,7 +10,7 @@ function Navbar({ logout }) {
           <a href="/my-profile">My Profile</a>
         </li>
         <li className="nav__list--chat">
-          <a href="/chat">Chat</a>
+          <a href="/">Chat</a>
         </li>
         <li className="nav__list--logout" onClick={logout}>
           Logout
