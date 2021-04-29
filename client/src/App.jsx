@@ -34,6 +34,7 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
+          <Redirect exact path="/" to="/login"></Redirect>
           <Route exact path="/login" component={LoginForm} />
           <Route exact path="/signup" component={SignupForm} />
           <Route exact path="/username" component={Username} />

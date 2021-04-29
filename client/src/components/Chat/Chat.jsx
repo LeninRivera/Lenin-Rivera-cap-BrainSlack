@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import ScrollToBottom from "react-scroll-to-bottom";
 import Navbar from "../Navbar/Navbar";
 import "./Chat.scss";
+import jwt from "jsonwebtoken";
+import Userfront from "@userfront/react";
 
 function Chat(props) {
   const [messages, setMessages] = useState([]);
@@ -15,7 +17,10 @@ function Chat(props) {
   const [displayUsers, setDisplayUsers] = useState(null);
   const [user, setUser] = useState("");
 
-  const username = sessionStorage.getItem("username");
+  const allUserInfo = jwt.decode(Userfront.idToken());
+  console.log(allUserInfo);
+
+  const username = allUserInfo.name;
 
   socket.auth = { username };
   socket.connect();
@@ -33,12 +38,15 @@ function Chat(props) {
     users.sort((a, b) => {
       return a.username - b.username;
     });
-    setUsersArr(...usersArr, users);
+    setUsersArr(users);
+    // setUsersArr(...usersArr, users);
   });
 
   //adding new user that connect after you login
   socket.on("new user connected", (user) => {
-    setUsersArr([...usersArr, user]);
+    console.log(user);
+    // setUsersArr([...usersArr, user]);
+    setUsersArr(user);
   });
 
   socket.on("updated users on disconnect", (users) => {
@@ -81,9 +89,14 @@ function Chat(props) {
   };
 
   const logout = () => {
-    socket.disconnect();
-    sessionStorage.removeItem("username");
-    props.history.push("/username");
+    document.cookie =
+      "refresh.8nwpw7bw=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "id.8nwpw7bw=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "access.8nwpw7bw=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    console.log("this is the clickhandle");
+    props.history.push("/login");
   };
 
   useEffect(() => {
@@ -156,11 +169,11 @@ function Chat(props) {
     );
   }, [messages, props.match.params.username]);
 
-  console.log(user);
+  console.log(usersArr);
 
   return (
     <>
-      <Navbar logout={logout} username={user} />
+      <Navbar username={username} logout={logout} />
       <main className="chat">
         <section className="chat__users">
           <h2 className="chat__users--title">Users</h2>

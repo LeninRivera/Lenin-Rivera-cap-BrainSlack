@@ -3,7 +3,6 @@ import { Route, Redirect } from "react-router-dom";
 import Userfront from "@userfront/react";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  console.log(Userfront.accessToken());
   return (
     <Route
       {...rest}

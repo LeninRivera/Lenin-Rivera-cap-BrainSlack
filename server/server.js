@@ -9,7 +9,7 @@ const io = require("socket.io")(httpServer, {
     methods: ["GET", "POST"],
   },
 });
-const router = require("./routes/routes");
+const router = require("./routes/messages");
 
 io.use((socket, next) => {
   const username = socket.handshake.auth.username;
@@ -38,12 +38,9 @@ io.on("connection", (socket) => {
   }
 
   socket.emit("users", users);
-  console.log(messages);
 
-  socket.broadcast.emit("new user connected", {
-    userID: socket.id,
-    username: socket.username,
-  });
+  socket.broadcast.emit("new user connected", users);
+  // console.log(users);
 
   socket.on("disconnect", () => {
     console.log("User has left", socket.username, socket.id);
