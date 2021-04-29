@@ -12,6 +12,7 @@ function Chat(props) {
   const [usersArr, setUsersArr] = useState([]);
   const [currentSelectedUser, setCurrentSelectedUser] = useState("");
   const [displayMessages, setDisplayMessages] = useState(null);
+  const [displayUsers, setDisplayUsers] = useState(null);
   const [user, setUser] = useState("");
 
   const username = sessionStorage.getItem("username");
@@ -21,14 +22,17 @@ function Chat(props) {
 
   useEffect(() => {
     setCurrentSelectedUser(props.match.params.username);
-    setUser(socket.username);
+    setUser(username);
   }, []);
 
   console.log(socket);
 
   socket.on("users", (users) => {
     //returns all currently connected users
-    users.sort();
+    console.log(users);
+    users.sort((a, b) => {
+      return a.username - b.username;
+    });
     setUsersArr(...usersArr, users);
   });
 
@@ -38,7 +42,6 @@ function Chat(props) {
   });
 
   socket.on("updated users on disconnect", (users) => {
-    console.log(users);
     setUsersArr(users);
   });
 
@@ -84,6 +87,48 @@ function Chat(props) {
   };
 
   useEffect(() => {
+    console.log(usersArr);
+    const newUsersArr = usersArr.sort((a, b) => {
+      console.log(a.username);
+      console.log(b.username);
+      const usernameA = a.username.toUpperCase();
+      const usernameB = b.username.toUpperCase();
+
+      if (usernameA < usernameB) {
+        return -1;
+      }
+      if (usernameA > usernameB) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    });
+
+    console.log(newUsersArr);
+
+    setDisplayUsers(
+      newUsersArr.map((user) => {
+        return (
+          <li
+            className={
+              "chat__users__list--user " +
+              (currentSelectedUser === user.username ? "currentUser" : "")
+            }
+            key={user.userID}
+            onClick={() => {
+              setCurrentSelectedUser(user.username);
+              props.history.push(`/chat/${user.username}/${user.userID}`);
+            }}
+          >
+            {user.username}
+          </li>
+        );
+      })
+    );
+  }, [usersArr, props.match.params.username]);
+
+  useEffect(() => {
     //filtering messages to only contain what belongs in the chat
     const chatMessages = messages.filter((element) => {
       return (
@@ -111,31 +156,15 @@ function Chat(props) {
     );
   }, [messages, props.match.params.username]);
 
+  console.log(user);
+
   return (
     <>
-      <Navbar logout={logout} />
+      <Navbar logout={logout} username={user} />
       <main className="chat">
         <section className="chat__users">
           <h2 className="chat__users--title">Users</h2>
-          {usersArr.map((user) => {
-            return (
-              <ul className="chat__users__list">
-                <li
-                  className={
-                    "chat__users__list--user " +
-                    (currentSelectedUser === user.username ? "currentUser" : "")
-                  }
-                  key={user.userID}
-                  onClick={() => {
-                    setCurrentSelectedUser(user.username);
-                    props.history.push(`/chat/${user.username}/${user.userID}`);
-                  }}
-                >
-                  {user.username}
-                </li>
-              </ul>
-            );
-          })}
+          <ul className="chat__users__list">{displayUsers}</ul>
         </section>
         <section className="chat__msg">
           <h1 className="chat__msg--title">

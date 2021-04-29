@@ -1,13 +1,18 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
+import Userfront from "@userfront/react";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const username = sessionStorage.getItem("username");
+  console.log(Userfront.accessToken());
   return (
     <Route
       {...rest}
       render={(routeProps) =>
-        !username ? <Redirect to="/username" /> : <Component {...routeProps} />
+        !Userfront.accessToken() ? (
+          <Redirect to="/login" />
+        ) : (
+          <Component {...routeProps} />
+        )
       }
     />
   );

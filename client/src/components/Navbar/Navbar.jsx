@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Navbar.scss";
 
-function Navbar({ logout }) {
+function Navbar({ logout, username }) {
   return (
     <nav className="nav">
       <h1 className="nav--title">BrainStation WynSLack</h1>
@@ -13,7 +13,7 @@ function Navbar({ logout }) {
           <a href="/">Chat</a>
         </li>
         <li className="nav__list--logout" onClick={logout}>
-          Logout
+          Logout, {username}
         </li>
       </ul>
     </nav>
