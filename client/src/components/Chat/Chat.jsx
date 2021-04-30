@@ -7,6 +7,8 @@ import Navbar from "../Navbar/Navbar";
 import "./Chat.scss";
 import jwt from "jsonwebtoken";
 import Userfront from "@userfront/react";
+import axios from "axios";
+import moment from "moment";
 
 function Chat(props) {
   const [messages, setMessages] = useState([]);
@@ -18,7 +20,6 @@ function Chat(props) {
   const [user, setUser] = useState("");
 
   const allUserInfo = jwt.decode(Userfront.idToken());
-  console.log(allUserInfo);
 
   const username = allUserInfo.name;
 
@@ -28,13 +29,19 @@ function Chat(props) {
   useEffect(() => {
     setCurrentSelectedUser(props.match.params.username);
     setUser(username);
+    axios
+      .get("http://localhost:8080/messages")
+      .then((res) => {
+        console.log(res.data);
+        setMessages(res.data);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   }, []);
-
-  console.log(socket);
 
   socket.on("users", (users) => {
     //returns all currently connected users
-    console.log(users);
     users.sort((a, b) => {
       return a.username - b.username;
     });
@@ -44,8 +51,6 @@ function Chat(props) {
 
   //adding new user that connect after you login
   socket.on("new user connected", (user) => {
-    console.log(user);
-    // setUsersArr([...usersArr, user]);
     setUsersArr(user);
   });
 
@@ -53,6 +58,7 @@ function Chat(props) {
     setUsersArr(users);
   });
 
+  //receiving a new message
   socket.on("private message", (message) => {
     setMessages([...messages, message]);
   });
@@ -73,16 +79,24 @@ function Chat(props) {
       );
     });
 
+    const time = moment().format("MMMM Do YYYY, h:mm a");
+
+    //finds the user we are sending a DM to from our usersArr
+    const toSocket = usersArr.find(
+      (element) => element.username === props.match.params.username
+    );
+
     const message = {
+      messageId: uuidv4(),
       from: socket.auth.username,
       to: props.match.params.username,
       conversationId: existingConversation
         ? existingConversation.conversationId
         : uuidv4(),
       text: e.target.text.value,
-      time: new Date(),
+      time: time,
       fromSocketId: socket.id,
-      toSocketId: props.match.params.chatId,
+      toSocketId: toSocket.userID,
     };
     setMessages([...messages, message]);
     socket.emit("private message", message);
@@ -95,15 +109,12 @@ function Chat(props) {
       "id.8nwpw7bw=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie =
       "access.8nwpw7bw=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    console.log("this is the clickhandle");
+    socket.disconnect();
     props.history.push("/login");
   };
 
   useEffect(() => {
-    console.log(usersArr);
     const newUsersArr = usersArr.sort((a, b) => {
-      console.log(a.username);
-      console.log(b.username);
       const usernameA = a.username.toUpperCase();
       const usernameB = b.username.toUpperCase();
 
@@ -113,12 +124,9 @@ function Chat(props) {
       if (usernameA > usernameB) {
         return 1;
       }
-
       // names must be equal
       return 0;
     });
-
-    console.log(newUsersArr);
 
     setDisplayUsers(
       newUsersArr.map((user) => {
@@ -131,7 +139,7 @@ function Chat(props) {
             key={user.userID}
             onClick={() => {
               setCurrentSelectedUser(user.username);
-              props.history.push(`/chat/${user.username}/${user.userID}`);
+              props.history.push(`/chat/${user.username}`);
             }}
           >
             {user.username}
@@ -152,6 +160,7 @@ function Chat(props) {
       );
     });
 
+    console.log("this is setDisplayMessages");
     setDisplayMessages(
       chatMessages.map((message) => {
         return (
@@ -168,8 +177,6 @@ function Chat(props) {
       })
     );
   }, [messages, props.match.params.username]);
-
-  console.log(usersArr);
 
   return (
     <>

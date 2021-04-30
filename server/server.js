@@ -10,6 +10,10 @@ const io = require("socket.io")(httpServer, {
   },
 });
 const router = require("./routes/messages");
+const cors = require("cors");
+const Message = require("./db/models/message");
+
+app.use(cors());
 
 io.use((socket, next) => {
   const username = socket.handshake.auth.username;
@@ -40,7 +44,6 @@ io.on("connection", (socket) => {
   socket.emit("users", users);
 
   socket.broadcast.emit("new user connected", users);
-  // console.log(users);
 
   socket.on("disconnect", () => {
     console.log("User has left", socket.username, socket.id);
@@ -61,9 +64,19 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("updated users on disconnect", users);
   });
 
-  socket.on("private message", (message) => {
-    console.log(message);
+  socket.on("private message", async (message) => {
     messages.push(message);
+    console.log(message);
+    const newMessage = new Message({
+      messageId: message.messageId,
+      from: message.from,
+      to: message.to,
+      text: message.text,
+      time: message.time,
+      conversationId: message.conversationId,
+    });
+    await newMessage.save();
+    console.log(newMessage);
     socket.to(message.toSocketId).emit("private message", message);
   });
 });

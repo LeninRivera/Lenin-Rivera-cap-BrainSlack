@@ -22,7 +22,7 @@ let data = [
     from: "Stephanie",
     to: "Andy",
     text: "Hi",
-    time: 1619707025,
+    time: "April 29th 2021, 11:45 pm",
     conversationId: 1,
   },
   {
@@ -30,7 +30,7 @@ let data = [
     from: "Andy",
     to: "Stephanie",
     text: "Hey?",
-    time: 1619707030,
+    time: "April 29th 2021, 11:47 pm",
     conversationId: 1,
   },
   {
@@ -38,7 +38,7 @@ let data = [
     from: "Stephanie",
     to: "Andy",
     text: "I can't sleep",
-    time: 1619707035,
+    time: "April 29th 2021, 11:50 pm",
     conversationId: 1,
   },
   {
@@ -46,7 +46,7 @@ let data = [
     from: "Andy",
     to: "Stephanie",
     text: "I can. Goodnight",
-    time: 1619707045,
+    time: "April 29th 2021,11:56 pm",
     conversationId: 1,
   },
 ];

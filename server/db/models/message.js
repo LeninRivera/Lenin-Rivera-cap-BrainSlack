@@ -19,7 +19,7 @@ const messageSchema = new mongoose.Schema({
     required: true,
   },
   time: {
-    type: Number,
+    type: String,
     require: true,
   },
   conversationId: {

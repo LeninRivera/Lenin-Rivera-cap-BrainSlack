@@ -39,7 +39,7 @@ function App() {
           <Route exact path="/signup" component={SignupForm} />
           <Route exact path="/username" component={Username} />
           <ProtectedRoute exact path="/dashboard" component={Chat} />
-          <ProtectedRoute path="/chat/:username/:chatId" component={Chat} />
+          <ProtectedRoute path="/chat/:username" component={Chat} />
         </Switch>
       </Router>
     </div>
