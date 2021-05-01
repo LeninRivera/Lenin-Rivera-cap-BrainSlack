@@ -23,10 +23,9 @@ function Chat(props) {
 
   const username = allUserInfo.name;
 
-  socket.auth = { username };
-  socket.connect();
-
   useEffect(() => {
+    socket.auth = { username };
+    socket.connect();
     setCurrentSelectedUser(props.match.params.username);
     setUser(username);
     axios
@@ -166,7 +165,7 @@ function Chat(props) {
         return (
           <div className="chat__msg__messages--message" key={uuidv4()}>
             <p className="chat__msg__messages--message--from">
-              {message.from}{" "}
+              {message.from} {message.time}
               {/* <span className="time">
                 {message.time.toLocaleString("en-us")}
               </span> */}
@@ -195,10 +194,7 @@ function Chat(props) {
             )}
           </h1>
           <ScrollToBottom>
-            <div className="chat__msg__messages">
-              {/* insert messages here (probably need to use username or socket id from params)*/}
-              {displayMessages}
-            </div>
+            <div className="chat__msg__messages">{displayMessages}</div>
           </ScrollToBottom>
 
           <form className="chat__msg__form" onSubmit={handleSubmit}>
