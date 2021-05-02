@@ -26,6 +26,10 @@ const messageSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  unreadMessage: {
+    type: Boolean,
+    require: true,
+  },
 });
 
 const Message = mongoose.model("Message", messageSchema);

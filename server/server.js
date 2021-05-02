@@ -33,7 +33,6 @@ io.on("connection", (socket) => {
   console.log("we have a new connection", socket.username, socket.id);
 
   const users = [];
-
   for (let [id, socket] of io.of("/").sockets) {
     users.push({
       userID: id,
@@ -66,7 +65,7 @@ io.on("connection", (socket) => {
 
   socket.on("private message", async (message) => {
     messages.push(message);
-    console.log(message);
+    // console.log(message);
     const newMessage = new Message({
       messageId: message.messageId,
       from: message.from,
@@ -74,10 +73,26 @@ io.on("connection", (socket) => {
       text: message.text,
       time: message.time,
       conversationId: message.conversationId,
+      unreadMessage: message.unreadMessage,
     });
     await newMessage.save();
-    console.log(newMessage);
+    // console.log(newMessage);
     socket.to(message.toSocketId).emit("private message", message);
+  });
+
+  socket.on("updated unread message", async (unreadMessageInfo) => {
+    try {
+      const queryMessages = await Message.updateMany(
+        {
+          from: `${unreadMessageInfo.from}`,
+          to: `${unreadMessageInfo.to}`,
+          unreadMessage: true,
+        },
+        { unreadMessage: false }
+      );
+    } catch (err) {
+      console.log(err.message);
+    }
   });
 });
 

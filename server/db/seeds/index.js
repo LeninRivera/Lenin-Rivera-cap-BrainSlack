@@ -24,6 +24,7 @@ let data = [
     text: "Hi",
     time: "April 29th 2021, 11:45 pm",
     conversationId: 1,
+    unreadMessage: false,
   },
   {
     messageId: Math.floor(Math.random() * 1000).toString(),
@@ -32,6 +33,7 @@ let data = [
     text: "Hey?",
     time: "April 29th 2021, 11:47 pm",
     conversationId: 1,
+    unreadMessage: false,
   },
   {
     messageId: Math.floor(Math.random() * 1000).toString(),
@@ -40,6 +42,7 @@ let data = [
     text: "I can't sleep",
     time: "April 29th 2021, 11:50 pm",
     conversationId: 1,
+    unreadMessage: false,
   },
   {
     messageId: Math.floor(Math.random() * 1000).toString(),
@@ -48,6 +51,55 @@ let data = [
     text: "I can. Goodnight",
     time: "April 29th 2021,11:56 pm",
     conversationId: 1,
+    unreadMessage: false,
+  },
+  {
+    messageId: Math.floor(Math.random() * 1000).toString(),
+    from: "Andy",
+    to: "Andy",
+    text: "I can. Goodnight",
+    time:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    conversationId: 2,
+    unreadMessage: false,
+  },
+  {
+    messageId: Math.floor(Math.random() * 1000).toString(),
+    from: "Andy",
+    to: "Andy",
+    text: "I can. Goodnight",
+    time:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    conversationId: 2,
+    unreadMessage: false,
+  },
+  {
+    messageId: Math.floor(Math.random() * 1000).toString(),
+    from: "Andy",
+    to: "Andy",
+    text:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    time: "April 29th 2021,11:56 pm",
+    conversationId: 2,
+    unreadMessage: false,
+  },
+  {
+    messageId: Math.floor(Math.random() * 1000).toString(),
+    from: "Andy",
+    to: "Andy",
+    text:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    time: "April 29th 2021,11:56 pm",
+    conversationId: 2,
+    unreadMessage: false,
+  },
+  {
+    messageId: Math.floor(Math.random() * 1000).toString(),
+    from: "Stephanie",
+    to: "Andy",
+    text: "HOW You doin?",
+    conversationId: 1,
+    unreadMessage: true,
   },
 ];
 

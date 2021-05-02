@@ -10,7 +10,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Username from "./pages/Username";
 import Chat from "./components/Chat/Chat";
 import "./App.scss";
-import socket from "./socket";
 import Userfront from "@userfront/react";
 
 function App() {
@@ -22,12 +21,6 @@ function App() {
 
   const LoginForm = Userfront.build({
     toolId: "rmoodb",
-  });
-
-  //any event received by client is printed in console
-  //todo remove when finished
-  socket.onAny((event, ...args) => {
-    console.log(event, args);
   });
 
   return (

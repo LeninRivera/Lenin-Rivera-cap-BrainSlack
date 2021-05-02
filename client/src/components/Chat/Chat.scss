@@ -2,46 +2,110 @@
 
 .currentUser {
   background-color: #3fba91;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 .chat {
   background-color: $lightGrey;
+  position: fixed;
+  width: 100vw;
   height: 100%;
-  padding: 20px 11.3924vw;
   display: flex;
   justify-content: space-between;
 
   &__users {
-    width: 15vw;
+    width: 30%;
     background-color: $usersBackground;
-    color: #ffffff;
-    padding: 16px 16px;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 20px 16px;
 
     &--title {
       text-align: left;
       padding-bottom: 16px;
+      padding-left: 16px;
     }
 
     &__list--user {
       text-align: left;
       padding: 8px 0;
+      border-radius: 20px;
+
+      &:hover {
+        color: #ffffff;
+      }
     }
   }
 
   &__msg {
-    width: 45vw;
+    width: 70%;
+
+    padding-top: 20px;
 
     &--title {
       text-align: left;
+      color: rgb(0, 0, 0, 0.5);
+      padding-left: 8px;
     }
 
     &__messages {
+      overflow-y: scroll;
       width: 100%;
       height: 70vh;
-      background-color: #ffffff;
 
       &--message {
+        border-top: 0.25px solid rgb(0, 0, 0, 0.5);
+        &--fromDiv {
+          display: flex;
+          justify-content: space-between;
+          padding: 4px 4px 4px 20px;
+        }
+
+        &--text {
+          text-align: left;
+          padding: 4px 4px 4px 20px;
+        }
+      }
+    }
+    &__form {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+
+      &--input {
+        height: 60px;
+        margin-bottom: 8px;
+        border-radius: 20px;
+        border: none;
+        padding-left: 16px;
+        padding-top: 8px;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      &--send {
+        background-color: #3fba91;
+        border: none;
+        border-radius: 20px;
       }
     }
   }
+}
+
+.chat__users__list--user {
+  display: flex;
+  justify-content: space-between;
+}
+
+#unread {
+  background-color: #ff3e88;
+  color: #ffffff;
+  width: 20px;
+  border-radius: 20%;
+  height: 20px;
+  align-self: center;
+  text-align: center;
 }

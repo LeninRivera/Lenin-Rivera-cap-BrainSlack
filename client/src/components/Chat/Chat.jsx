@@ -31,7 +31,6 @@ function Chat(props) {
     axios
       .get("http://localhost:8080/messages")
       .then((res) => {
-        console.log(res.data);
         setMessages(res.data);
       })
       .catch((error) => {
@@ -45,7 +44,6 @@ function Chat(props) {
       return a.username - b.username;
     });
     setUsersArr(users);
-    // setUsersArr(...usersArr, users);
   });
 
   //adding new user that connect after you login
@@ -59,6 +57,9 @@ function Chat(props) {
 
   //receiving a new message
   socket.on("private message", (message) => {
+    if (message.from === props.match.params.username) {
+      message.unreadMessage = false;
+    }
     setMessages([...messages, message]);
   });
 
@@ -69,6 +70,8 @@ function Chat(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const form = e.target;
+
     const existingConversation = messages.find((element) => {
       return (
         (element.from === socket.auth.username &&
@@ -92,13 +95,17 @@ function Chat(props) {
       conversationId: existingConversation
         ? existingConversation.conversationId
         : uuidv4(),
-      text: e.target.text.value,
+      text: text,
       time: time,
       fromSocketId: socket.id,
       toSocketId: toSocket.userID,
+      unreadMessage:
+        socket.auth.username === props.match.params.username ? false : true,
     };
     setMessages([...messages, message]);
     socket.emit("private message", message);
+
+    form.reset();
   };
 
   const logout = () => {
@@ -129,24 +136,50 @@ function Chat(props) {
 
     setDisplayUsers(
       newUsersArr.map((user) => {
+        const unreadMessages = messages.filter((element) => {
+          return (
+            element.from === user.username &&
+            element.to === socket.auth.username &&
+            element.unreadMessage === true
+          );
+        });
+        console.log(unreadMessages);
+        const unreadCount = unreadMessages.length;
         return (
           <li
             className={
-              "chat__users__list--user " +
+              "chat__users__list--user" +
               (currentSelectedUser === user.username ? "currentUser" : "")
             }
             key={user.userID}
             onClick={() => {
               setCurrentSelectedUser(user.username);
               props.history.push(`/chat/${user.username}`);
+              if (unreadCount) {
+                messages.map((message) => {
+                  if (
+                    message.from === user.username &&
+                    message.to === socket.auth.username
+                  ) {
+                    message.unreadMessage = false;
+                  }
+                });
+                // setMessages(messages);
+                const unreadMessageInfo = {
+                  from: user.username,
+                  to: socket.auth.username,
+                };
+                socket.emit("updated unread message", unreadMessageInfo);
+              }
             }}
           >
-            {user.username}
+            <p>{user.username}</p>{" "}
+            {unreadCount ? <p id="unread">{unreadCount}</p> : ""}
           </li>
         );
       })
     );
-  }, [usersArr, props.match.params.username]);
+  }, [usersArr, props.match.params.username, messages]);
 
   useEffect(() => {
     //filtering messages to only contain what belongs in the chat
@@ -159,23 +192,26 @@ function Chat(props) {
       );
     });
 
-    console.log("this is setDisplayMessages");
     setDisplayMessages(
       chatMessages.map((message) => {
         return (
           <div className="chat__msg__messages--message" key={uuidv4()}>
-            <p className="chat__msg__messages--message--from">
-              {message.from} {message.time}
-              {/* <span className="time">
-                {message.time.toLocaleString("en-us")}
-              </span> */}
-            </p>
+            <div className="chat__msg__messages--message--fromDiv">
+              <p className="chat__msg__messages--message--fromDiv-user">
+                {message.from}
+              </p>
+              <p className="chat__msg__messages--message--fromDiv-time">
+                {message.time}
+              </p>
+            </div>
             <p className="chat__msg__messages--message--text">{message.text}</p>
           </div>
         );
       })
     );
   }, [messages, props.match.params.username]);
+
+  // console.log("how many times does this render");
 
   return (
     <>
@@ -193,20 +229,25 @@ function Chat(props) {
               <>Chat</>
             )}
           </h1>
-          <ScrollToBottom>
-            <div className="chat__msg__messages">{displayMessages}</div>
-          </ScrollToBottom>
+          {/* <ScrollToBottom> */}
+          <div className="chat__msg__messages">{displayMessages}</div>
+          {/* </ScrollToBottom> */}
 
           <form className="chat__msg__form" onSubmit={handleSubmit}>
-            <input
-              className="chat__msg__form--input"
-              type="text"
-              name="text"
-              onChange={handleChange}
-            />
-            <button className="chat__msg__form--send" type="submit">
-              Send
-            </button>
+            {props.match.params.username && (
+              <>
+                <textarea
+                  className="chat__msg__form--input"
+                  type="text"
+                  name="text"
+                  onChange={handleChange}
+                  placeholder="Message"
+                ></textarea>
+                <button className="chat__msg__form--send" type="submit">
+                  Send
+                </button>
+              </>
+            )}
           </form>
         </section>
       </main>
