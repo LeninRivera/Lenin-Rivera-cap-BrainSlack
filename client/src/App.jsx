@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,18 +6,12 @@ import {
   Redirect,
 } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
-
-import Username from "./pages/Username";
 import Chat from "./components/Chat/Chat";
 import "./App.scss";
 import Userfront from "@userfront/react";
 
 function App() {
   Userfront.init("8nwpw7bw");
-
-  const SignupForm = Userfront.build({
-    toolId: "oaddol",
-  });
 
   const LoginForm = Userfront.build({
     toolId: "rmoodb",
@@ -29,8 +23,7 @@ function App() {
         <Switch>
           <Redirect exact path="/" to="/login"></Redirect>
           <Route exact path="/login" component={LoginForm} />
-          <Route exact path="/signup" component={SignupForm} />
-          <Route exact path="/username" component={Username} />
+
           <ProtectedRoute exact path="/dashboard" component={Chat} />
           <ProtectedRoute path="/chat/:username" component={Chat} />
         </Switch>

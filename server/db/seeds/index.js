@@ -95,9 +95,10 @@ let data = [
   },
   {
     messageId: Math.floor(Math.random() * 1000).toString(),
-    from: "Stephanie",
-    to: "Andy",
+    from: "Andy",
+    to: "Stephanie",
     text: "HOW You doin?",
+    time: "April 29th 2021,11:56 pm",
     conversationId: 1,
     unreadMessage: true,
   },

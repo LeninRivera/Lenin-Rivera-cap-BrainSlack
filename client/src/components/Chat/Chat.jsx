@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import socket from "../../socket";
 import { v4 as uuidv4 } from "uuid";
-import ScrollToBottom from "react-scroll-to-bottom";
 import Navbar from "../Navbar/Navbar";
 import "./Chat.scss";
 import jwt from "jsonwebtoken";
@@ -143,7 +141,6 @@ function Chat(props) {
             element.unreadMessage === true
           );
         });
-        console.log(unreadMessages);
         const unreadCount = unreadMessages.length;
         return (
           <li
@@ -210,8 +207,6 @@ function Chat(props) {
       })
     );
   }, [messages, props.match.params.username]);
-
-  // console.log("how many times does this render");
 
   return (
     <>

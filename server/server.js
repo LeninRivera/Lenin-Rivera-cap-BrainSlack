@@ -21,7 +21,6 @@ io.use((socket, next) => {
     return next(new Error("invalid username"));
   }
   socket.username = username;
-  // console.log(socket.username);
   next();
 });
 
@@ -46,26 +45,25 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("User has left", socket.username, socket.id);
-    // console.log("user array:", users);
+
     const disconnectedUserIndex = users
       .map((user) => {
         return user.userID;
       })
       .indexOf(socket.id);
-    // console.log("index of disconnected", disconnectedUserIndex);
+
     const updatedUsers = users.filter(
       (user) => users[disconnectedUserIndex].userID !== user.userID
     );
-    // console.log("updated users array", updatedUsers);
+
     users.splice(0, users.length, ...updatedUsers);
-    // console.log(users);
 
     socket.broadcast.emit("updated users on disconnect", users);
   });
 
   socket.on("private message", async (message) => {
     messages.push(message);
-    // console.log(message);
+
     const newMessage = new Message({
       messageId: message.messageId,
       from: message.from,
@@ -76,7 +74,7 @@ io.on("connection", (socket) => {
       unreadMessage: message.unreadMessage,
     });
     await newMessage.save();
-    // console.log(newMessage);
+
     socket.to(message.toSocketId).emit("private message", message);
   });
 

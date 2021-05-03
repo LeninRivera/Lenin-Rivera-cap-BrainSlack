@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Navbar.scss";
-import Userfront from "@userfront/react";
 
 function Navbar({ logout, username }) {
   return (
