@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("updated users on disconnect", users);
   });
 
-  socket.on("private message", async (message) => {
+  socket.on("send private message", async (message) => {
     messages.push(message);
 
     const newMessage = new Message({
@@ -75,7 +75,7 @@ io.on("connection", (socket) => {
     });
     await newMessage.save();
 
-    socket.to(message.toSocketId).emit("private message", message);
+    socket.to(message.toSocketId).emit("pushed private message", message);
   });
 
   socket.on("updated unread message", async (unreadMessageInfo) => {

@@ -54,7 +54,7 @@ function Chat(props) {
   });
 
   //receiving a new message
-  socket.on("private message", (message) => {
+  socket.on("pushed private message", (message) => {
     if (message.from === props.match.params.username) {
       message.unreadMessage = false;
     }
@@ -101,7 +101,7 @@ function Chat(props) {
         socket.auth.username === props.match.params.username ? false : true,
     };
     setMessages([...messages, message]);
-    socket.emit("private message", message);
+    socket.emit("send private message", message);
 
     form.reset();
   };
@@ -207,6 +207,8 @@ function Chat(props) {
       })
     );
   }, [messages, props.match.params.username]);
+
+  console.log("how many times is this rendered");
 
   return (
     <>
