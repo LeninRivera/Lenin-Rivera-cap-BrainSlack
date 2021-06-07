@@ -15,19 +15,21 @@ function Chat(props) {
   const [currentSelectedUser, setCurrentSelectedUser] = useState("");
   const [displayMessages, setDisplayMessages] = useState(null);
   const [displayUsers, setDisplayUsers] = useState(null);
-  const [user, setUser] = useState("");
+  // const [user, setUser] = useState("");
 
   const allUserInfo = jwt.decode(Userfront.idToken());
 
   const username = allUserInfo.name;
 
+  //upon login this gives the socket the person's username, connects them to the server and retrieves messages "from" and "to" the specific user
   useEffect(() => {
     socket.auth = { username };
     socket.connect();
     setCurrentSelectedUser(props.match.params.username);
-    setUser(username);
+    console.log(socket);
+    // setUser(username);
     axios
-      .get("http://localhost:8080/messages")
+      .get(`http://localhost:8080/messages/${username}`)
       .then((res) => {
         setMessages(res.data);
       })
