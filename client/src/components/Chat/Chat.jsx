@@ -23,8 +23,10 @@ function Chat(props) {
 
   //upon login this gives the socket the person's username, connects them to the server and retrieves messages "from" and "to" the specific user
   useEffect(() => {
+    //todo maybe move line below outside of useEffect
     socket.auth = { username };
     socket.connect();
+    //todo maybe move line below outside of useEffect
     setCurrentSelectedUser(props.match.params.username);
     console.log(socket);
     // setUser(username);
@@ -51,6 +53,7 @@ function Chat(props) {
     setUsersArr(user);
   });
 
+  //todo might be better to filter out disconnected user
   socket.on("updated users on disconnect", (users) => {
     setUsersArr(users);
   });
@@ -63,6 +66,7 @@ function Chat(props) {
     setMessages([...messages, message]);
   });
 
+  //set the value of the text a person is typing/inputting before sending
   const handleChange = (e) => {
     const value = e.target.value;
     setText(value);
@@ -72,6 +76,7 @@ function Chat(props) {
     e.preventDefault();
     const form = e.target;
 
+    //used to find old conversation and then later used to acquire that conversations id
     const existingConversation = messages.find((element) => {
       return (
         (element.from === socket.auth.username &&
@@ -88,6 +93,7 @@ function Chat(props) {
       (element) => element.username === props.match.params.username
     );
 
+    //creates the data we'll be sending to the backend and saving in our database
     const message = {
       messageId: uuidv4(),
       from: socket.auth.username,
@@ -102,7 +108,9 @@ function Chat(props) {
       unreadMessage:
         socket.auth.username === props.match.params.username ? false : true,
     };
+    //adds the new message to the local user's messages
     setMessages([...messages, message]);
+    //emits the new message to the backend
     socket.emit("send private message", message);
 
     form.reset();
@@ -233,6 +241,7 @@ function Chat(props) {
           {/* </ScrollToBottom> */}
 
           <form className="chat__msg__form" onSubmit={handleSubmit}>
+            {/* Displays the name of the current user you're talking to and displays the text area where user's type there message/input */}
             {props.match.params.username && (
               <>
                 <textarea
