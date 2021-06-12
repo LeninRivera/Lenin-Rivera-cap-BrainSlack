@@ -1,5 +1,6 @@
 require("dotenv").config();
 require("./db/config");
+const express = require("express");
 const app = require("express")();
 const httpServer = require("http").createServer(app);
 const PORT = 8080;
@@ -9,11 +10,15 @@ const io = require("socket.io")(httpServer, {
     methods: ["GET", "POST"],
   },
 });
-const router = require("./routes/messages");
+const messageRouter = require("./routes/messages");
 const cors = require("cors");
 const Message = require("./db/models/message");
 
+//CORS Middleware
 app.use(cors());
+
+// Parse incoming JSON into objects
+app.use(express.json());
 
 io.use((socket, next) => {
   const username = socket.handshake.auth.username;
@@ -94,7 +99,7 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use(router);
+app.use("/api/messages", messageRouter);
 
 httpServer.listen(PORT, () => {
   console.log(`listening on port: ${PORT}`);

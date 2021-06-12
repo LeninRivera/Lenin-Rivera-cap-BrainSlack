@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Message = require("../db/models/message");
 
-router.get("/messages/:username", async (req, res) => {
+router.get("/user/:username", async (req, res) => {
   try {
     const messagesFrom = await Message.find({
       from: req.params.username,
